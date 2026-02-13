@@ -792,8 +792,10 @@ int lgw_sx1261_setconf(struct lgw_conf_sx1261_s * conf) {
 
     /* Set the SX1261 global conf */
     CONTEXT_SX1261.enable = conf->enable;
-    strncpy(CONTEXT_SX1261.spi_path, conf->spi_path, sizeof CONTEXT_SX1261.spi_path);
-    CONTEXT_SX1261.spi_path[sizeof CONTEXT_SX1261.spi_path - 1] = '\0'; /* ensure string termination */
+    if (CONTEXT_COM_TYPE == LGW_COM_SPI) {
+      strncpy(CONTEXT_SX1261.spi_path, conf->spi_path, sizeof CONTEXT_SX1261.spi_path);
+      CONTEXT_SX1261.spi_path[sizeof CONTEXT_SX1261.spi_path - 1] = '\0'; /* ensure string termination */
+    }
     CONTEXT_SX1261.rssi_offset = conf->rssi_offset;
 
     /* Set the LBT conf */
@@ -1093,6 +1095,7 @@ int lgw_start(void) {
     dbg_init_random();
 
     if (CONTEXT_COM_TYPE == LGW_COM_SPI) {
+#if 0
         /* Find the temperature sensor on the known supported ports */
         for (i = 0; i < (int)(sizeof I2C_PORT_TEMP_SENSOR); i++) {
             ts_addr = I2C_PORT_TEMP_SENSOR[i];
@@ -1116,7 +1119,7 @@ int lgw_start(void) {
             printf("ERROR: no temperature sensor found.\n");
             return LGW_HAL_ERROR;
         }
-
+#endif
         /* Configure ADC AD338R for full duplex (CN490 reference design) */
         if (CONTEXT_BOARD.full_duplex == true) {
             err = i2c_linuxdev_open(I2C_DEVICE, I2C_PORT_DAC_AD5338R, &ad_fd);
@@ -1223,11 +1226,11 @@ int lgw_stop(void) {
 
     if (CONTEXT_COM_TYPE == LGW_COM_SPI) {
         DEBUG_MSG("INFO: Closing I2C for temperature sensor\n");
-        x = i2c_linuxdev_close(ts_fd);
-        if (x != 0) {
-            printf("ERROR: failed to close I2C temperature sensor device (err=%i)\n", x);
-            err = LGW_HAL_ERROR;
-        }
+        // x = i2c_linuxdev_close(ts_fd);
+        // if (x != 0) {
+        //     printf("ERROR: failed to close I2C temperature sensor device (err=%i)\n", x);
+        //     err = LGW_HAL_ERROR;
+        // }
 
         if (CONTEXT_BOARD.full_duplex == true) {
             DEBUG_MSG("INFO: Closing I2C for AD5338R\n");
