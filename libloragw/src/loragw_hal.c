@@ -1290,11 +1290,11 @@ int lgw_receive(uint8_t max_pkt, struct lgw_pkt_rx_s *pkt_data) {
     }
 
     /* Apply RSSI temperature compensation */
-    res = lgw_get_temperature(&current_temperature);
-    if (res != LGW_I2C_SUCCESS) {
-        printf("ERROR: failed to get current temperature\n");
-        return LGW_HAL_ERROR;
-    }
+    // res = lgw_get_temperature(&current_temperature);
+    // if (res != LGW_I2C_SUCCESS) {
+    //     printf("ERROR: failed to get current temperature\n");
+    //     return LGW_HAL_ERROR;
+    // }
 
     /* Iterate on the RX buffer to get parsed packets */
     for (nb_pkt_found = 0; nb_pkt_found < ((nb_pkt_fetched <= max_pkt) ? nb_pkt_fetched : max_pkt); nb_pkt_found++) {
